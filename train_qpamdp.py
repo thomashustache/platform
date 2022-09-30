@@ -2,7 +2,6 @@ import os
 os.environ['SDL_VIDEODRIVER']='dummy'
 import sys
 sys.path.append(os.getcwd() + '/')
-# os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 from agents.DQNAgent import DQNAgent
 from agents.A2CAgent import A2CAgent
 from trainers.QPAMDPTrainer import QPAMDPTrainer
@@ -28,7 +27,11 @@ from gym_platform.envs.platform_env import PlatformEnv
 if __name__ == "__main__":
 
     TRAINER_NAME = "QPAMDP"
+
+    # 1. define Env
     env = PlatformEnv()
+
+    # 2. Define Q-Learn Agent
     dqn_agent = DQNAgent(
         init_action_params=INIT_ACTION_PARAMS,
         nb_actions=N_ACTIONS,
@@ -40,10 +43,10 @@ if __name__ == "__main__":
         lr=LR_QLEARN,
         agent_id=0,
         max_optim_steps=1e5,
-        max_plateau_episodes=7000,
-        trainer_name=TRAINER_NAME,
+        max_plateau_steps=7000,
     )
 
+    # 3. Define P-search Agent
     a2c_agent = A2CAgent(
         init_action_params=INIT_ACTION_PARAMS,
         saved_models_dir=SAVED_MODEL_DIR,
@@ -56,13 +59,14 @@ if __name__ == "__main__":
         init_stds=INIT_STDS,
         min_stds=MIN_STDS,
         max_optim_steps=1e5,
-        max_plateau_episodes=3000,
+        max_plateau_steps=3000,
         agent_id=1,
-        trainer_name=TRAINER_NAME,
     )
 
+    # 4. define Q-PAMDP(k) trainer 
     trainer = QPAMDPTrainer(
         env=env,
+        config_script='utils/config.py',
         experience_name=EXPERIENCE_NAME,
         logdir=LOGDIR,
         psearch_agent=a2c_agent,
@@ -70,4 +74,6 @@ if __name__ == "__main__":
         max_qpamdp_steps=10,
         k_param=-1,
     )
+    
+    # 5. train
     trainer.train()

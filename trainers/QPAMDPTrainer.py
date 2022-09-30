@@ -11,13 +11,14 @@ import glob
 from utils.frames_to_vid import load_images_to_video
 from utils.video_to_gif import make_gif_from_video
 from utils.clean_dir import clean_dir
-
+from utils.py_script_to_txt import save_config_file
 
 
 class QPAMDPTrainer(object):
 
     def __init__(self,
                  env: PlatformEnv,
+                 config_script: str,
                  logdir: str,
                  experience_name:str,
                  psearch_agent: A2CAgent,
@@ -30,7 +31,6 @@ class QPAMDPTrainer(object):
         self.psearch_agent = psearch_agent
         self.qlearn_agent = qlearn_agent
 
-
         # optim attributes
         self.max_steps = max_qpamdp_steps
         self.k_param = k_param
@@ -38,13 +38,14 @@ class QPAMDPTrainer(object):
         # tensorboard attributes
         self.experience_name = experience_name
         self.name = 'QPAMDP'
-        self.psearch_agent.trainer_name = self.name
-        self.qlearn_agent.trainer_name = self.name
         self.writer = SummaryWriter(log_dir=logdir + f'/{self.name}')
         self.tot_writter_steps = 0
         self.global_optim_step = 0
         self.tot_episodes_played = 0
         self.eval_frequency = 1
+        
+        # config
+        self.config_script = config_script
 
 
         self.set_common_tensorboard_writers()
@@ -58,7 +59,7 @@ class QPAMDPTrainer(object):
 
         print('generating video...')
         self.psearch_agent.load('best_model.pth')
-        self.psearch_agent.a2c_model.eval()
+        self.psearch_agent.actor_critic.eval()
         self.qlearn_agent.load('best_model.pth')
         self.qlearn_agent.main_qnet.eval()
         env = PlatformEnv()
@@ -74,8 +75,9 @@ class QPAMDPTrainer(object):
             clean_dir(frames_path)
             clean_dir(video_path)
             clean_dir(gif_folder)
-
-        tot_r = 0
+            save_config_file(self.config_script, video_path + 'config.txt')
+            
+        total_reward = 0
         d = False
 
         state, _ = env.reset()
@@ -86,27 +88,27 @@ class QPAMDPTrainer(object):
             params = self.psearch_agent.learned_act(state)
             action = deconvert_act(Action(action_id, params[action_id]))
             (state, _), r, d, _, _ = env.step(action)
-            tot_r += r
+            total_reward += r
 
-        tot_r = str(int(tot_r * 1000) / 1000)
+        total_reward = str(int(total_reward * 100) / 100)
 
         # Save all frames and create video + Gif
-        video_name = video_path + f'optimstep_{self.global_optim_step}_reward-' + tot_r + '.mp4'
+        video_name = video_path + f'optimstep_{self.global_optim_step}_reward-' + total_reward + '.mp4'
         env.save_render_states(dir=frames_path, prefix='')
         load_images_to_video(imgs_path=frames_path, video_name=video_name)
 
         # Gif
         print('generating gif from video...')
-        gif_name = f'optimstep_{self.global_optim_step}_reward-' + tot_r + '.gif'
+        gif_name = f'optimstep_{self.global_optim_step}_reward-' + total_reward + '.gif'
         make_gif_from_video(video_path=video_name,
                             gif_folder=gif_folder,
                             gif_name=gif_name,
                             jpgs_frame_folder='results/jpgs/',
-                            skip_rate=2)
+                            skip_rate=5)
 
 
     def train(self):
-        """Reproduce the training procedure described in the paper: https://arxiv.org/pdf/1509.01644.pdf
+        """Reproduce the Q-PAMDP(k) training procedure described in the paper: https://arxiv.org/pdf/1509.01644.pdf
 
         Inputs:
 
@@ -125,8 +127,8 @@ class QPAMDPTrainer(object):
         """
 
         # 1. w <- Q-Learn(oo) with fixed theta
-        self.psearch_agent.a2c_model.eval()
-        self.qlearn_agent.train(env=self.env, action_param_agent=self.psearch_agent, verbose=False)
+        self.psearch_agent.actor_critic.eval()
+        self.qlearn_agent.train(env=self.env, action_param_agent=self.psearch_agent)
 
         # 2. Repeat until theta converges
         self.record_video_policy(first_call=True)
@@ -135,31 +137,24 @@ class QPAMDPTrainer(object):
 
             ## update all tb writer steps
             self.psearch_agent.writer_step = self.qlearn_agent.writer_step
-            # self.psearch_agent.rewardmem = self.qlearn_agent.rewardmem
-            # self.psearch_agent.stepmem = self.qlearn_agent.stepmem
-            # self.psearch_agent.action_mem = self.qlearn_agent.action_mem
-
             print('Training Psearch algorithm...')
             self.qlearn_agent.load(model_name='best_model.pth')
             self.qlearn_agent.main_qnet.eval()
-            self.psearch_agent.a2c_model.train()
-            if self.k_param == 1:
-                self.psearch_agent.train_one_step(env=self.env, action_id_agent=self.qlearn_agent)
+            self.psearch_agent.actor_critic.train()
+            if self.k_param != -1:
+                for _ in range(self.k_param):
+                    self.psearch_agent.train_one_step(env=self.env, action_id_agent=self.qlearn_agent)
             else:
-                self.psearch_agent.train(env=self.env, action_id_agent=self.qlearn_agent, verbose=False)
+                self.psearch_agent.train(env=self.env, action_id_agent=self.qlearn_agent)
 
-            ## update all tb writer steps
+            
             self.qlearn_agent.writer_step = self.psearch_agent.writer_step
-            # self.qlearn_agent.rewardmem = self.psearch_agent.rewardmem
-            # self.qlearn_agent.stepmem = self.psearch_agent.stepmem
-            # self.qlearn_agent.action_mem = self.psearch_agent.action_mem
-
             print('Training Qlearn algorithm...')
             self.psearch_agent.load(model_name='best_model.pth')
-            self.psearch_agent.a2c_model.eval()
+            self.psearch_agent.actor_critic.eval()
             self.qlearn_agent.train(env=self.env, action_param_agent=self.psearch_agent)
 
-            #record video
+            # record current policy video
             self.record_video_policy()
             self.global_optim_step += 1
 

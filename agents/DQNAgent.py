@@ -56,17 +56,23 @@ class DQNAgent(BaseAgent):
         self.target_qnet = QNetwork(obs_size=9, n_actions=self.nb_actions, hidden_size=128).to(self.device)
         self.optimizer = torch.optim.Adam(params=self.main_qnet.parameters(), lr=lr)
         
-    # def compute_action_weights(self, actions: torch.Tensor) -> torch.Tensor:
+    def compute_action_weights(self, actions: torch.Tensor) -> torch.Tensor:
+        """ Computes action weights to re-balance the batch of transition. (Not tested)
+
+        Args:
+            actions (torch.Tensor): discrete action id
+
+        Returns:
+            torch.Tensor: weights per action
+        """
         
-    #     actions_array = actions.detach().numpy()
-    #     unique_actions = np.unique(actions_array)
-    #     class_weights = compute_class_weight(class_weight='balanced',
-    #                                 classes=unique_actions,
-    #                                 y=actions_array)
-        
-    #     print(class_weights)
-        
-    #     return torch.Tensor(class_weights).to(self.device)
+        actions_array = actions.detach().numpy()
+        unique_actions = np.unique(actions_array)
+        class_weights = compute_class_weight(class_weight='balanced',
+                                    classes=unique_actions,
+                                    y=actions_array)
+                
+        return torch.Tensor(class_weights).to(self.device)
 
     def act(self, state: np.ndarray) -> int:
         """Choose an action with an eps-greedy policy
@@ -106,7 +112,7 @@ class DQNAgent(BaseAgent):
         self.target_qnet.load_state_dict(self.main_qnet.state_dict())
 
     def update_epsilon(self) -> None:
-        """Decrease epsilon value
+        """Decrease exploration parameter value 
         """
         self.epsilon = np.maximum(self.epsilon * self.eps_decay, self.min_epsilon)
 
@@ -117,7 +123,7 @@ class DQNAgent(BaseAgent):
             env (PlatformEnv): the Platform environment
 
         Returns:
-            (Sequence[Transition]): the collected experience of this episode
+            (Sequence[Transition]): the collected experience during this episode
         """
 
         collected_xp = []
@@ -155,7 +161,6 @@ class DQNAgent(BaseAgent):
         # tensorboard logs
         self.rewardmem.add(episode_reward)
         self.stepmem.add(step_counter)
-        self.nb_episodes_played += 1
 
         # self.check_need_saving()
         return collected_xp
@@ -170,40 +175,34 @@ class DQNAgent(BaseAgent):
         return td_targets
 
     def single_optimization_step(self) -> None:
-        """performs a single optimization step
+        """Performs a single optimization step on a btach of transitions sampled from the ReplayBuffer.
         """
 
+        # 1. sample transitions
         states, actions, rewards, next_states, dones = self.replay_buffer.sample()
-
-        ###### OLD VERSION
-        # # predict expected return of current state using main network
-        # q_values = self.main_qnet(states)
-        # pred_return, _ = torch.max(q_values, axis=1)
-
-        # # get target return using target network
-        # with torch.no_grad():
-        #     q_values_next = self.target_qnet(next_states).detach()
-        # max_q_values_next, _ = torch.max(q_values_next, axis=1)
-
-        # # if done, we set Q(done) to 0
-        # d = dones.squeeze(-1)
-        # max_q_values_next[d == 1] = 0.0
-
-        # td_target = rewards + self.discount * max_q_values_next
-
+        
+        # 2. compute the expected Return values Q(s, a)
         pred_return = self.main_qnet(states)[np.arange(0, self.batch_size), actions]  # Q_online(s,a)
+        
+        # 3. compute the TD targets
         td_target = self.td_targets(next_states=next_states, rewards=rewards, dones=dones)
 
+        # 4. update weights based on MSE loss
         loss = nn.MSELoss()(pred_return, td_target)
         self.optimizer.zero_grad()
         loss.backward()
-        # loss.backward(retain_graph=True)
         self.optimizer.step()
 
         return loss.item()
 
     def init_training(self):
+        """Training initialization
+        """
+        
+        # base init
         self._init_training()
+        
+        # specific init
         self.replay_buffer.memory.clear()
         self.loss_memory.memory.clear()
         self.main_qnet.train()
@@ -211,7 +210,7 @@ class DQNAgent(BaseAgent):
         self.epsilon = self.init_epsilon
 
 
-    def train(self, env: PlatformEnv, action_param_agent: BaseAgent = None, verbose: bool = True) -> None:
+    def train(self, env: PlatformEnv, action_param_agent: BaseAgent = None) -> None:
         """Learning loop. Off-Policy update.
 
         Args:
@@ -220,9 +219,8 @@ class DQNAgent(BaseAgent):
         """
 
         self.init_training()
-        has_converged = self.check_convergence()
 
-        while self.current_optim_step < self.max_optim_steps and not has_converged:
+        while self.current_optim_step < self.max_optim_steps and not self.check_convergence():
 
             # collect experience
             xp = self.run_one_episode(env, action_param_policy=action_param_agent)
@@ -235,48 +233,40 @@ class DQNAgent(BaseAgent):
                 self.loss_memory.add(current_loss)
 
                 # Main Tensorboard logs
-                if action_param_agent is not None:
-                    action_param_agent.a2c_model.update_tensorboard(writer_step=self.writer_step)
                 self.update_tensorboard_logs()
-
+                
+                # Action-Param agent's logs to monitor the continuous parameters it chooses
+                if action_param_agent is not None:
+                    action_param_agent.actor_critic.update_tensorboard(writer_step=self.writer_step)
+                
                 # Specific tensorboard logs
                 if self.current_optim_step % self.write_frequency == 0:
                     self.loss_writer.add_scalar(self.algo_name + '/mse_loss', self.loss_memory(), self.loss_writer_step)
                     self.loss_writer_step += 1
 
-                # Update Target Network every n iterations
+                # Update Target Network every self.update_freq iterations
                 if self.current_optim_step % self.update_freq == 0:
                     self.update_target_graph()
                     self.update_epsilon()
 
-                # Verbose
-                if self.current_optim_step % self.verbose_freq == 0 and verbose:
-                    self.verbose(e=self.current_optim_step)
-
-                # check convergence
+                # increment optimization step
                 self.current_optim_step += 1
-                has_converged = self.check_convergence()
 
-    def verbose(self, e: int) -> None:
-        """Some printings
+    def save(self, model_name: str = 'best_model.pth') -> None:
+        """Save torch model.
 
         Args:
-            e (int): current step
+            model_name (str, optional): _description_. Defaults to 'best_model.pth'.
         """
-        pass
-        # print("Epoch {:03d}/{:03d} | Sum of discounted rewards : {:2.2f} | MSE loss : {:1.4f} | proba random action : {:1.2f}"
-            #   .format(e, self.max_optim_steps, self.discounted_rewards[-1], self.losses[-1], self.epsilon))
-
-    def save(self, model_name='best_model.pth') -> None:
-        """Save torch model
-        """
-        print('saving DQN model...')
+        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
+        print(f'Saving {self.algo_name} model...')
         torch.save(self.main_qnet.state_dict(), self.saved_models_dir + self.algo_name + '/' + model_name)
 
-    def load(self, model_name='best_model.pth') -> None:
+    def load(self, model_name: str ='best_model.pth') -> None:
         """Load torch model
         """
-        print('loading model...')
+        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
+        print(f'Loading {self.algo_name} model...')
         self.main_qnet.load_state_dict(torch.load(self.saved_models_dir + self.algo_name + '/' + model_name))
 
 

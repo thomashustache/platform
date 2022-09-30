@@ -10,7 +10,7 @@ from utils.config import INIT_ACTION_PARAMS, LOGDIR
 # max_means = torch.from_numpy(Constants.PARAMETERS_MAX).to(DEVICE)
 # max_stds = torch.Tensor([3, 3, 3]).to(DEVICE) # adjusted by looking at this : https://academo.org/demos/gaussian-distribution/
 
-class ModelA2C(nn.Module):
+class ActorCritic(nn.Module):
     def __init__(self,
                  init_stds: torch.Tensor,
                  init_means: torch.Tensor,
@@ -19,7 +19,18 @@ class ModelA2C(nn.Module):
                  act_size: int = 3,
                  hidden_size: int = 128,
                  optimize_stds: bool = False):
-        super(ModelA2C, self).__init__()
+        """Actor-Critic model
+
+        Args:
+            init_stds (torch.Tensor): Stds Init values of each discrete action's parameters
+            init_means (torch.Tensor): Means Init values of each discrete action's parameters
+            logdir (str): log directory for tensorboard
+            obs_size (int, optional): State size. Defaults to 9.
+            act_size (int, optional): Nb of discrete actions. Defaults to 3.
+            hidden_size (int, optional): Hidden layers' size. Defaults to 128.
+            optimize_stds (bool, optional): Wether we optimize stds or fix them. Defaults to False.
+        """
+        super(ActorCritic, self).__init__()
 
 
         self.log_writer = SummaryWriter(logdir + '/A2CAgent')
@@ -55,6 +66,8 @@ class ModelA2C(nn.Module):
 
 
     def _init_memories(self) -> None:
+        """Initialize buffers.
+        """
         for _, a_name in ACTION_LOOKUP.items():
             self.mu_mem[a_name] = MovingAverageMemory(100)
             self.sigma_mem[a_name] = MovingAverageMemory(100)
@@ -72,23 +85,34 @@ class ModelA2C(nn.Module):
             if module.bias is not None:
                 module.bias.data.zero_()
 
-    def _store_params(self, mus, stds):
+    def _store_params(self, mus: torch.Tensor, stds: torch.Tensor):
+        """Store the output Means and Stds in their respective buffers.
+
+        Args:
+            mus (Tensor): Action param Means that are output by the model.
+            stds (Tensor): Action param Stds that are output by the model.
+        """
         for i, a_name in ACTION_LOOKUP.items():
             self.mu_mem[a_name].add(mus[i].clone().item())
             self.sigma_mem[a_name].add(stds[i].clone().item())
 
     def update_tensorboard(self, writer_step: int):
+        """Update tensorboard logs.
+
+        Args:
+            writer_step (int): current step
+        """
 
         self.log_writer.add_scalars('Params/Means_ActParam/', {k:v() for k, v in self.mu_mem.items()}, writer_step)
         self.log_writer.add_scalars('Params/Sigmas_ActParam/', {k:v() for k, v in self.sigma_mem.items()}, writer_step)
 
-
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor) -> torch.distributions:
         base_out = self.base(x)
 
         mus = self.mu(base_out) * self.calibration_means
         stds = self.std(base_out) * self.calibration_stds if self.optimize_stds else self.init_stds
         
+        # if first_call of the forward method, we rescale the outputs of the model so that they are equal to the desired means and stds.
         if self.nb_calls == 0:
             for ind, y in enumerate(self.init_means):
                 self.calibration_means[ind] = y / mus[ind]
@@ -102,16 +126,6 @@ class ModelA2C(nn.Module):
             
         self._store_params(mus=mus, stds=stds)
         return torch.distributions.Normal(mus, stds), self.value(base_out)
-
-
-if __name__ == '__main__':
-
-    model = ModelA2C().to(torch.device('cuda:0'))
-    x = torch.randn((2, 9)).to(torch.device('cuda:0'))
-
-    dists, v = model(x)
-    actions = dists.sample().detach().cpu().data.numpy()
-    print(v, actions)
 
 
 
