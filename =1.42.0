@@ -1,0 +1,124 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting azureml-sdk[automl,explain,notebooks]
+  Downloading azureml_sdk-1.45.0-py3-none-any.whl (2.7 kB)
+Collecting azureml-train-automl-client~=1.45.0
+  Downloading azureml_train_automl_client-1.45.0-py3-none-any.whl (135 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 136.0/136.0 kB 613.0 kB/s eta 0:00:00
+Collecting azureml-train-core~=1.45.0
+  Downloading azureml_train_core-1.45.0-py3-none-any.whl (8.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.6/8.6 MB 667.7 kB/s eta 0:00:00
+Collecting azureml-pipeline~=1.45.0
+  Downloading azureml_pipeline-1.45.0-py3-none-any.whl (2.4 kB)
+Collecting azureml-dataset-runtime[fuse]~=1.45.0
+  Downloading azureml_dataset_runtime-1.45.0-py3-none-any.whl (2.3 kB)
+Collecting azureml-core~=1.45.0
+  Downloading azureml_core-1.45.0.post2-py3-none-any.whl (3.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 841.2 kB/s eta 0:00:00
+Collecting azureml-explain-model~=1.45.0
+  Downloading azureml_explain_model-1.45.0-py3-none-any.whl (20 kB)
+Collecting azureml-train-automl~=1.45.0
+  Downloading azureml_train_automl-1.45.0-py3-none-any.whl (2.3 kB)
+Collecting azureml-contrib-notebook~=1.45.0
+  Downloading azureml_contrib_notebook-1.45.0-py3-none-any.whl (28 kB)
+Collecting azureml-widgets~=1.45.0
+  Downloading azureml_widgets-1.45.0.post1-py3-none-any.whl (14.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.1/14.1 MB 532.9 kB/s eta 0:00:00
+Collecting azureml-pipeline-core~=1.45.0
+  Downloading azureml_pipeline_core-1.45.0-py3-none-any.whl (312 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 312.7/312.7 kB 762.3 kB/s eta 0:00:00
+Collecting nbconvert<6
+  Downloading nbconvert-5.6.1-py2.py3-none-any.whl (455 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 455.1/455.1 kB 529.7 kB/s eta 0:00:00
+Collecting papermill<2
+  Downloading papermill-1.2.1-py2.py3-none-any.whl (31 kB)
+Collecting ipykernel
+  Downloading ipykernel-6.16.0-py3-none-any.whl (138 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 138.4/138.4 kB 484.1 kB/s eta 0:00:00
+Collecting jupyter-client<7
+  Downloading jupyter_client-6.1.12-py3-none-any.whl (112 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 112.7/112.7 kB 536.1 kB/s eta 0:00:00
+Collecting ipython
+  Downloading ipython-7.34.0-py3-none-any.whl (793 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 793.8/793.8 kB 799.4 kB/s eta 0:00:00
+Requirement already satisfied: requests[socks]<3.0.0,>=2.19.1 in /Users/hustachethomas/Library/Python/3.7/lib/python/site-packages (from azureml-core~=1.45.0->azureml-sdk[automl,explain,notebooks]) (2.26.0)
+Collecting azure-core<2.0.0
+  Downloading azure_core-1.25.1-py3-none-any.whl (178 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 178.8/178.8 kB 760.0 kB/s eta 0:00:00
+Requirement already satisfied: pytz in /Users/hustachethomas/Library/Python/3.7/lib/python/site-packages (from azureml-core~=1.45.0->azureml-sdk[automl,explain,notebooks]) (2019.1)
+Collecting contextlib2<22.0.0
+  Downloading contextlib2-21.6.0-py2.py3-none-any.whl (13 kB)
+Collecting cryptography!=1.9,!=2.0.*,!=2.1.*,!=2.2.*,<38.0.0
+  Downloading cryptography-37.0.4-cp36-abi3-macosx_10_10_x86_64.whl (2.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.8/2.8 MB 654.2 kB/s eta 0:00:00
+Collecting docker<6.0.0
+  Downloading docker-5.0.3-py2.py3-none-any.whl (146 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 146.2/146.2 kB 568.9 kB/s eta 0:00:00
+Collecting backports.tempfile
+  Downloading backports.tempfile-1.0-py2.py3-none-any.whl (4.4 kB)
+Collecting msal<2.0.0,>=1.15.0
+  Downloading msal-1.19.0-py2.py3-none-any.whl (83 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.3/83.3 kB 609.8 kB/s eta 0:00:00
+Collecting azure-mgmt-containerregistry<11,>=8.2.0
+  Downloading azure_mgmt_containerregistry-10.0.0-py3-none-any.whl (1.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 819.4 kB/s eta 0:00:00
+Requirement already satisfied: urllib3<2.0.0,>=1.23 in /Users/hustachethomas/Library/Python/3.7/lib/python/site-packages (from azureml-core~=1.45.0->azureml-sdk[automl,explain,notebooks]) (1.25.3)
+Collecting argcomplete<3
+  Downloading argcomplete-2.0.0-py2.py3-none-any.whl (37 kB)
+Collecting azure-mgmt-resource<22.0.0,>=15.0.0
+  Downloading azure_mgmt_resource-21.1.0-py3-none-any.whl (1.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 673.1 kB/s eta 0:00:00
+Requirement already satisfied: packaging<22.0,>=20.0 in /Users/hustachethomas/Library/Python/3.7/lib/python/site-packages (from azureml-core~=1.45.0->azureml-sdk[automl,explain,notebooks]) (21.3)
+Collecting azure-mgmt-keyvault<11.0.0,>=0.40.0
+  Downloading azure_mgmt_keyvault-10.1.0-py3-none-any.whl (605 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 605.9/605.9 kB 548.3 kB/s eta 0:00:00
+Collecting azure-common<2.0.0,>=1.1.12
+  Downloading azure_common-1.1.28-py2.py3-none-any.whl (14 kB)
+Collecting msrestazure<=0.6.4,>=0.4.33
+  Downloading msrestazure-0.6.4-py2.py3-none-any.whl (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.5/40.5 kB 349.8 kB/s eta 0:00:00
+Collecting paramiko<3.0.0,>=2.0.8
+  Downloading paramiko-2.11.0-py2.py3-none-any.whl (212 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 212.9/212.9 kB 748.7 kB/s eta 0:00:00
+Collecting PyJWT<3.0.0
+  Downloading PyJWT-2.5.0-py3-none-any.whl (20 kB)
+Collecting SecretStorage<4.0.0
+  Downloading SecretStorage-3.3.3-py3-none-any.whl (15 kB)
+Collecting azure-mgmt-authorization<3,>=0.40.0
+  Downloading azure_mgmt_authorization-2.0.0-py2.py3-none-any.whl (465 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 465.2/465.2 kB 659.3 kB/s eta 0:00:00
+Collecting azure-graphrbac<1.0.0,>=0.40.0
+  Downloading azure_graphrbac-0.61.1-py2.py3-none-any.whl (141 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 141.4/141.4 kB 746.9 kB/s eta 0:00:00
+Collecting pkginfo
+  Downloading pkginfo-1.8.3-py2.py3-none-any.whl (26 kB)
+Collecting pyopenssl<23.0.0
+  Downloading pyOpenSSL-22.1.0-py3-none-any.whl (57 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.0/57.0 kB 733.9 kB/s eta 0:00:00
+Collecting humanfriendly<11.0,>=4.7
+  Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 793.5 kB/s eta 0:00:00
+Collecting ndg-httpsclient<=0.5.1
+  Downloading ndg_httpsclient-0.5.1-py3-none-any.whl (34 kB)
+Collecting azure-mgmt-storage<=20.0.0,>=16.0.0
+  Downloading azure_mgmt_storage-20.0.0-py3-none-any.whl (2.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 865.5 kB/s eta 0:00:00
+Collecting knack~=0.9.0
+  Downloading knack-0.9.0-py3-none-any.whl (59 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 59.8/59.8 kB 561.5 kB/s eta 0:00:00
+Collecting jmespath<2.0.0
+  Downloading jmespath-1.0.1-py3-none-any.whl (20 kB)
+Collecting msal-extensions<=1.0.0,>=0.3.0
+  Downloading msal_extensions-1.0.0-py2.py3-none-any.whl (19 kB)
+Collecting msrest<=0.7.1,>=0.5.1
+  Downloading msrest-0.7.1-py3-none-any.whl (85 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 85.4/85.4 kB 621.5 kB/s eta 0:00:00
+Collecting adal<=1.2.7,>=1.2.0
+  Downloading adal-1.2.7-py2.py3-none-any.whl (55 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.5/55.5 kB 132.3 kB/s eta 0:00:00
+Collecting jsonpickle<3.0.0
+  Downloading jsonpickle-2.2.0-py2.py3-none-any.whl (39 kB)
+Requirement already satisfied: python-dateutil<3.0.0,>=2.7.3 in /Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages (from azureml-core~=1.45.0->azureml-sdk[automl,explain,notebooks]) (2.8.0)
+Requirement already satisfied: pathspec<1.0.0 in /Users/hustachethomas/Library/Python/3.7/lib/python/site-packages (from azureml-core~=1.45.0->azureml-sdk[automl,explain,notebooks]) (0.9.0)
+Collecting azureml-dataprep<4.3.0a,>=4.2.0a
+  Downloading azureml_dataprep-4.2.2-py3-none-any.whl (43.4 MB)
+     ━━━━━━━━━━━━━╸                           14.9/43.4 MB 502.3 kB/s eta 0:00:57
