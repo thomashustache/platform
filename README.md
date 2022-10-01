@@ -2,7 +2,12 @@
 
 This repository was forked from the original: https://github.com/cycraig/gym-platform/.
 
-The Platform environment uses a parameterised action space and continuous state space. The task involves an agent learning to avoid enemies and traverse across platforms to reach a goal. Three actions are available to the agent: Run(dx), Hop(dx) and leap(dx) where dx is a learnable parameter for each discrete action.
+The Platform environment uses a parameterised action space and continuous state space. The task involves an agent learning to avoid enemies and traverse across platforms to reach a goal. Three actions are available to the agent: 
+- Run(dx)
+- Hop(dx)
+- leap(dx) 
+
+where dx is a learnable parameter for each discrete action.
 
 A dense reward is given to the agent based on the percentage of distance it travels. A reward of 1 being the highest the agent can get if it reaches the last platform. An episode terminates if the agent touches an enemy or falls into a gap between platforms.
 
@@ -72,8 +77,16 @@ Gif 1 - Policy learned with the QPAMDP algorithm. Reward = 0.72 at the end of th
 Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the second loop. The agent learned how to make the second jump.
 </p>
 
-## 5. Tracks of improvements
+## 5. Observations and tracks of improvements
+
+- My algorithm is very sensitive to the inital action-parameters. If well chosenn the algorithm will converge quickly to the optimal solution. If the parameters are set low on purpose, the agent struggles to learn the optimal parameters.
 
 - We can observe the discrete action taken are quite unbalanced. Hence, when DQN is learning, the agent will learned the qvalues from unbalanced batch of data. We could handle this by adding more weigths to rare actions for example.
+
+- Implement a better advantage estimation for the Actor-critic model. Indeed, I used a simple TD estimatation but one could use the n-step return estimation or even the Generalized Advantage Estimation (GAE) to find a better trade-off between bias and variance.
+
+- Implement the Parametrized Deep Q-learning algortithm [[P-QDN, Jiechao Xiong et Al., 2018]](https://arxiv.org/pdf/1810.06394.pdf) which seems to outperforms the QPAMDP algorithm on several different environments including the platform environment.
+
+- Implement the Multi-Pass DQN algorithm [[MP-DQN, Craig J. Bester and Al., 2019]](https://arxiv.org/pdf/1905.04388.pdf) which solves the *'false gradient problem'* that appears with PQDN algorithm.
 
 
