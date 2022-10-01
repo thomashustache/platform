@@ -59,6 +59,8 @@ Fig 1 - Environment logs over training steps for the QPAMDP algorithm. From left
 Fig 2 - Actor-Critic output values evolution. On the left, we can monitor the evolution of the means of each discrete action (first head of the Actor model). On the right, we monitor the evolution of the standard deviation of each action parameter (second head of the Actor model).
 </p>
 
+- On the tensorboard web page, one can also monitor the evolution on the different agents' losses.
+
 
 ## 5. Results
 At the end of each loop of the QPAMDP alogirthm, I recorded the current policy and saved the video as a gif. Here is the learned policy after one loop and after 2 loops:
@@ -82,9 +84,9 @@ Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the s
 - My algorithm is very sensitive to the inital action-parameters choice. If well chosenn
 , the algorithm will converge quickly to the optimal solution. On the other hand, if the parameters are set low on purpose, the agent struggles to learn the optimal parameters.
 
-- We can observe the discrete action taken are quite unbalanced. Hence, when DQN is learning, the agent will learned the qvalues from unbalanced batch of data. We could handle this by adding more weigths to rare actions for example.
+- We can observe the discrete actions that are taken are quite unbalanced. Hence, when DQN is learning, the agent will learned the qvalues from unbalanced batches of data. We could handle this by adding more weigths to rare actions for example.
 
-- Implement a better advantage estimation for the Actor-critic model. Indeed, I used a simple TD estimatation but one could use the n-step return estimation or even the Generalized Advantage Estimation (GAE) to find a better trade-off between bias and variance.
+- Implement a better advantage estimation for the Actor-Critic model. Indeed, I used a simple TD estimatation but one could use the n-step return estimation or even the Generalized Advantage Estimation (GAE) to find a better trade-off between bias and variance.
 
 - Implement the Parametrized Deep Q-learning algortithm [[P-QDN, Jiechao Xiong et Al., 2018]](https://arxiv.org/pdf/1810.06394.pdf) which seems to outperforms the QPAMDP algorithm on several different environments including the platform environment.
 
