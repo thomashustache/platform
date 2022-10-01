@@ -26,4 +26,8 @@ Then, you need to install the conda virtual environment and all of its dependanc
 
 ## 4. Monitoring training with Tensorboard
 
+## 5. Results
+
+[Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+
 ## 5. Tracks of improvements
