@@ -37,10 +37,10 @@ For example, I chose ```EXPERIENCE_NAME = "optimized_stds"```.
 - First, we can monitor the evolution of the average reward obtained per episodes over training steps, the number of environment steps done over training steps, the ratio of action chosen.
 
 <p align = "center">
-<img src = "results/logs/QPAMDP/optimized_stds/EnvLogs.png">
+<img src = "results/logs/optimized_stds/EnvLogs.png">
 </p>
 <p align = "center">
-Fig1 - Environment logs over training steps.
+Fig1 - Environment logs over training steps for the QPAMDP algorithm.
 </p>
 
 
