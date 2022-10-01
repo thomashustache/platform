@@ -50,7 +50,7 @@ class ReplayBuffer(object):
 
 class MovingAverageMemory(object):
     def __init__(self, max_memory: int) -> None:
-
+        self.max_memory = max_memory
         self.memory = deque(maxlen=max_memory)
 
     def add(self, value: float) -> None:
@@ -58,3 +58,7 @@ class MovingAverageMemory(object):
 
     def __call__(self) -> float:
         return np.mean(self.memory)
+    
+    def __len__(self):
+        """overload length operator"""
+        return len(self.memory)

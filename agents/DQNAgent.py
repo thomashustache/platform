@@ -52,9 +52,9 @@ class DQNAgent(BaseAgent):
         # self.batch_size = batch_size
 
         # Models
-        self.main_qnet = QNetwork(obs_size=9, n_actions=self.nb_actions, hidden_size=128).to(self.device)
+        self.model = QNetwork(obs_size=9, n_actions=self.nb_actions, hidden_size=128).to(self.device)
         self.target_qnet = QNetwork(obs_size=9, n_actions=self.nb_actions, hidden_size=128).to(self.device)
-        self.optimizer = torch.optim.Adam(params=self.main_qnet.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(params=self.model.parameters(), lr=lr)
         
     def compute_action_weights(self, actions: torch.Tensor) -> torch.Tensor:
         """ Computes action weights to re-balance the batch of transition. (Not tested)
@@ -100,7 +100,7 @@ class DQNAgent(BaseAgent):
 
         torch_state = torch_converter(state).to(self.device)
         with torch.no_grad():
-            a = np.argmax(self.main_qnet(torch_state).cpu().detach().numpy())
+            a = np.argmax(self.model(torch_state).cpu().detach().numpy())
 
         return int(a)
 
@@ -109,7 +109,7 @@ class DQNAgent(BaseAgent):
         We need to periodically update the Target network with the weights of the main network.
         """
 
-        self.target_qnet.load_state_dict(self.main_qnet.state_dict())
+        self.target_qnet.load_state_dict(self.model.state_dict())
 
     def update_epsilon(self) -> None:
         """Decrease exploration parameter value 
@@ -167,7 +167,7 @@ class DQNAgent(BaseAgent):
 
     @torch.no_grad()
     def td_targets(self, next_states, rewards, dones) -> torch.Tensor:
-        next_state_Q = self.main_qnet(next_states)
+        next_state_Q = self.model(next_states)
         best_action = torch.argmax(next_state_Q, axis=1)
         next_Q = self.target_qnet(next_states)[np.arange(0, self.batch_size), best_action]
         td_targets = (rewards + (1 - dones.float()) * self.discount * next_Q).float()
@@ -182,7 +182,7 @@ class DQNAgent(BaseAgent):
         states, actions, rewards, next_states, dones = self.replay_buffer.sample()
         
         # 2. compute the expected Return values Q(s, a)
-        pred_return = self.main_qnet(states)[np.arange(0, self.batch_size), actions]  # Q_online(s,a)
+        pred_return = self.model(states)[np.arange(0, self.batch_size), actions]  # Q_online(s,a)
         
         # 3. compute the TD targets
         td_target = self.td_targets(next_states=next_states, rewards=rewards, dones=dones)
@@ -205,7 +205,7 @@ class DQNAgent(BaseAgent):
         # specific init
         self.replay_buffer.memory.clear()
         self.loss_memory.memory.clear()
-        self.main_qnet.train()
+        self.model.train()
         self.update_target_graph()
         self.epsilon = self.init_epsilon
 
@@ -237,7 +237,7 @@ class DQNAgent(BaseAgent):
                 
                 # Action-Param agent's logs to monitor the continuous parameters it chooses
                 if action_param_agent is not None:
-                    action_param_agent.actor_critic.update_tensorboard(writer_step=self.writer_step)
+                    action_param_agent.model.update_tensorboard(writer_step=self.writer_step)
                 
                 # Specific tensorboard logs
                 if self.current_optim_step % self.write_frequency == 0:
@@ -252,21 +252,5 @@ class DQNAgent(BaseAgent):
                 # increment optimization step
                 self.current_optim_step += 1
 
-    def save(self, model_name: str = 'best_model.pth') -> None:
-        """Save torch model.
-
-        Args:
-            model_name (str, optional): _description_. Defaults to 'best_model.pth'.
-        """
-        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
-        print(f'Saving {self.algo_name} model...')
-        torch.save(self.main_qnet.state_dict(), self.saved_models_dir + self.algo_name + '/' + model_name)
-
-    def load(self, model_name: str ='best_model.pth') -> None:
-        """Load torch model
-        """
-        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
-        print(f'Loading {self.algo_name} model...')
-        self.main_qnet.load_state_dict(torch.load(self.saved_models_dir + self.algo_name + '/' + model_name))
 
 

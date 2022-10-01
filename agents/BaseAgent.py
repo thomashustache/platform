@@ -1,12 +1,11 @@
 import numpy as np
 import os
+import torch.nn as nn
 
-from pathlib import Path
 from abc import ABC, abstractmethod
-from typing import Sequence, Tuple, List
+from typing import Sequence
 from agents.agent_utils.memory import MovingAverageMemory
 from api.action import Action
-from api.observation import Observation
 from gym_platform.envs.platform_env import ACTION_LOOKUP, PlatformEnv
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -48,6 +47,7 @@ class BaseAgent(ABC):
         """
 
         # main attributes
+        self.model : nn.Module = None
         self.device = device
         self.agent_id = agent_id
         self.algo_name = algo_name
@@ -111,16 +111,6 @@ class BaseAgent(ABC):
         it proposes an action a"""
         pass
 
-    @abstractmethod
-    def save(self, model_name: str) -> None:
-        """ Save the agent's model's weights"""
-        
-        pass
-
-    @abstractmethod
-    def load(self, model_name: str) -> None:
-        """ This function allows to restore a model"""
-        pass
 
     def _build_save_directory(self) -> None:
         """Build directories and sub directories to save our models later.
@@ -168,6 +158,10 @@ class BaseAgent(ABC):
         Returns:
             bool: Wether the convergence has been reached or not.
         """
+        
+        if len(self.rewardmem) < self.rewardmem.max_memory:
+            # To avoid too high variance, we wait for the buffer to be full before updating the best_avg_reward variable
+            return False
 
         if self.convergence_counter > self.max_plateau_steps:
             self.convergence_counter = 0
@@ -190,3 +184,20 @@ class BaseAgent(ABC):
             self.save(model_name="best_model.pth")
 
         return False
+    
+    def save(self, model_name: str = 'best_model.pth') -> None:
+        """Save torch model.
+
+        Args:
+            model_name (str, optional): _description_. Defaults to 'best_model.pth'.
+        """
+        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
+        print(f'Saving {self.algo_name} model...')
+        torch.save(self.model.state_dict(), self.saved_models_dir + self.algo_name + '/' + model_name)
+
+    def load(self, model_name: str ='best_model.pth') -> None:
+        """Load torch model
+        """
+        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
+        print(f'Loading {self.algo_name} model...')
+        self.model.load_state_dict(torch.load(self.saved_models_dir + self.algo_name + '/' + model_name))

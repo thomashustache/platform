@@ -59,9 +59,9 @@ class QPAMDPTrainer(object):
 
         print('generating video...')
         self.psearch_agent.load('best_model.pth')
-        self.psearch_agent.actor_critic.eval()
+        self.psearch_agent.model.eval()
         self.qlearn_agent.load('best_model.pth')
-        self.qlearn_agent.main_qnet.eval()
+        self.qlearn_agent.model.eval()
         env = PlatformEnv()
 
         video_path = f'results/videos/{self.name}/{self.experience_name}/'
@@ -127,7 +127,7 @@ class QPAMDPTrainer(object):
         """
 
         # 1. w <- Q-Learn(oo) with fixed theta
-        self.psearch_agent.actor_critic.eval()
+        self.psearch_agent.model.eval()
         self.qlearn_agent.train(env=self.env, action_param_agent=self.psearch_agent)
 
         # 2. Repeat until theta converges
@@ -137,10 +137,11 @@ class QPAMDPTrainer(object):
 
             ## update all tb writer steps
             self.psearch_agent.writer_step = self.qlearn_agent.writer_step
+            # self.psearch_agent.rewardmem.memory = self.qlearn_agent.rewardmem.memory.copy()
             print('Training Psearch algorithm...')
             self.qlearn_agent.load(model_name='best_model.pth')
-            self.qlearn_agent.main_qnet.eval()
-            self.psearch_agent.actor_critic.train()
+            self.qlearn_agent.model.eval()
+            self.psearch_agent.model.train()
             if self.k_param != -1:
                 for _ in range(self.k_param):
                     self.psearch_agent.train_one_step(env=self.env, action_id_agent=self.qlearn_agent)
@@ -149,9 +150,10 @@ class QPAMDPTrainer(object):
 
             
             self.qlearn_agent.writer_step = self.psearch_agent.writer_step
+            # self.qlearn_agent.rewardmem.memory = self.psearch_agent.rewardmem.memory.copy()
             print('Training Qlearn algorithm...')
             self.psearch_agent.load(model_name='best_model.pth')
-            self.psearch_agent.actor_critic.eval()
+            self.psearch_agent.model.eval()
             self.qlearn_agent.train(env=self.env, action_param_agent=self.psearch_agent)
 
             # record current policy video

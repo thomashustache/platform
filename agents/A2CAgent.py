@@ -34,13 +34,13 @@ class A2CAgent(BaseAgent):
         self.init_stds = init_stds.to(self.device)
         self.std_decay = 0.999 # useful when Stds are fixed. We manually decrease their values over training.
         init_mean_action_params = torch.Tensor(self.init_action_params).to(self.device)
-        self.actor_critic = ActorCritic(act_size=self.nb_actions,
+        self.model = ActorCritic(act_size=self.nb_actions,
                                   logdir=self.logdir,
                                   hidden_size=128,
                                   optimize_stds=optimize_stds,
                                   init_means=init_mean_action_params,
                                   init_stds=self.init_stds.clone()).to(self.device)
-        self.optimizer = torch.optim.Adam(params=self.actor_critic.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(params=self.model.parameters(), lr=lr)
 
         # counters
         self.memory = [] # we will fill this with batch_size transitions
@@ -63,7 +63,7 @@ class A2CAgent(BaseAgent):
 
         with torch.no_grad():
             torch_sate = torch_converter(state).to(self.device)
-            dists, _ = self.actor_critic(torch_sate)
+            dists, _ = self.model(torch_sate)
             action_params = dists.sample().detach().cpu().data.numpy()
 
             return action_params
@@ -80,7 +80,7 @@ class A2CAgent(BaseAgent):
         """
 
         torch_sate = torch_converter(state).to(self.device)
-        dists, _ = self.actor_critic(torch_sate)
+        dists, _ = self.model(torch_sate)
         action_params = dists.sample()
 
         return action_params
@@ -111,7 +111,7 @@ class A2CAgent(BaseAgent):
 
             # Compute action parameters from Actor's head and value from Critic's head
             torch_sate = torch_converter(state).to(self.device)
-            dists, value_pred = self.actor_critic(torch_sate)
+            dists, value_pred = self.model(torch_sate)
             action_params = dists.sample()
 
             # compute log_prob for update rule
@@ -122,7 +122,7 @@ class A2CAgent(BaseAgent):
             action = deconvert_act(Action(action_id, param=params[action_id]))
             (next_state, step), reward, done, _, _ = env.step(action)
             torch_sate = torch_converter(next_state).to(self.device)
-            _, next_value_pred = self.actor_critic(torch_sate)
+            _, next_value_pred = self.model(torch_sate)
 
             # Basic 1-step Advantage estimation: A(s, a, theta) = (r + gamma * V(s', theta)) - V(s, theta)
             # TODO: n-step return estimation, GAE
@@ -156,8 +156,8 @@ class A2CAgent(BaseAgent):
         """Training initialization
         """
         self._init_training()
-        self.actor_critic.train()
-        self.actor_critic.init_stds = self.init_stds.clone()
+        self.model.train()
+        self.model.init_stds = self.init_stds.clone()
 
     def train(self, env: PlatformEnv, action_id_agent: BaseAgent) -> None:
         """Main training loop. On-policy update.
@@ -179,31 +179,15 @@ class A2CAgent(BaseAgent):
             if self.current_optim_step % self.write_frequency == 0:
                 self.loss_writer.add_scalar(self.algo_name + f'/critic_loss', self.criticloss_mem(), self.current_optim_step)
                 self.loss_writer.add_scalar(self.algo_name + f'/actor_loss', self.actorloss_mem(), self.current_optim_step)
-                self.actor_critic.update_tensorboard(writer_step=self.writer_step)
+                self.model.update_tensorboard(writer_step=self.writer_step)
 
             self.current_optim_step += 1
             
             # decrease Stds values with decay rate
             if not self.optimize_stds:
-                self.actor_critic.init_stds = torch.amax(torch.stack([self.actor_critic.init_stds * self.std_decay, self.min_stds], 0), 0)
+                self.model.init_stds = torch.amax(torch.stack([self.model.init_stds * self.std_decay, self.min_stds], 0), 0)
 
 
-    def save(self, model_name: str = 'best_model.pth') -> None:
-        """Save torch model.
-
-        Args:
-            model_name (str, optional): _description_. Defaults to 'best_model.pth'.
-        """
-        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
-        print(f'Saving {self.algo_name} model...')
-        torch.save(self.actor_critic.state_dict(), self.saved_models_dir + self.algo_name + '/' + model_name)
-
-    def load(self, model_name: str ='best_model.pth') -> None:
-        """Load torch model
-        """
-        assert(type(model_name) is str), f'model_name parameter must be a str not {type(model_name)}'
-        print(f'Loading {self.algo_name} model...')
-        self.actor_critic.load_state_dict(torch.load(self.saved_models_dir + self.algo_name + '/' + model_name))
 
 
 

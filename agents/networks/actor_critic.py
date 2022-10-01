@@ -2,10 +2,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 from agents.agent_utils.memory import MovingAverageMemory
-from gym_platform.envs.platform_env import Constants, ACTION_LOOKUP
+from gym_platform.envs.platform_env import ACTION_LOOKUP
 from utils.config import DEVICE
 from torch.utils.tensorboard import SummaryWriter
-from utils.config import INIT_ACTION_PARAMS, LOGDIR
 
 # max_means = torch.from_numpy(Constants.PARAMETERS_MAX).to(DEVICE)
 # max_stds = torch.Tensor([3, 3, 3]).to(DEVICE) # adjusted by looking at this : https://academo.org/demos/gaussian-distribution/
