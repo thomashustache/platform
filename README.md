@@ -79,7 +79,8 @@ Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the s
 
 ## 5. Observations and tracks of improvements
 
-- My algorithm is very sensitive to the inital action-parameters. If well chosenn the algorithm will converge quickly to the optimal solution. If the parameters are set low on purpose, the agent struggles to learn the optimal parameters.
+- My algorithm is very sensitive to the inital action-parameters choice. If well chosenn
+, the algorithm will converge quickly to the optimal solution. On the other hand, if the parameters are set low on purpose, the agent struggles to learn the optimal parameters.
 
 - We can observe the discrete action taken are quite unbalanced. Hence, when DQN is learning, the agent will learned the qvalues from unbalanced batch of data. We could handle this by adding more weigths to rare actions for example.
 
