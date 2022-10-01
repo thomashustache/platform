@@ -34,14 +34,22 @@ For example, I chose ```EXPERIENCE_NAME = "optimized_stds"```.
 
 - During training, it is possible to monitor different logs, that will help us understanding the learning process (and also detect some bugs).
 - Please, enter the command: ```tensorboard --logdir results/logs/[EXPERIENCE_NAME] ``` where EXPERIENCE_NAME has to be replaced with the one you chose previously.
-- First, we can monitor the evolution of the average reward obtained per episodes over training steps, the number of environment steps done over training steps, the ratio of action chosen.
 
 <p align = "center">
 <img src = "results/logs/optimized_stds/EnvLogs.png">
 </p>
 <p align = "center">
-Fig1 - Environment logs over training steps for the QPAMDP algorithm.
+Fig1 - Environment logs over training steps for the QPAMDP algorithm. From left to right: ratio of action taken (blue is LEAP, pink is RUN red is HOP), Average reward per episode evolution, Average number of steps per episode. The last graph allows to monitor which of the DQN (0) or the A2C (1) agent is currently training.
 </p>
+
+<p align = "center">
+<img src = "results/logs/optimized_stds/ActionParametersLogs.png" width=600 height=auto>
+</p>
+<p align = "center">
+Fig 2 - Actor-Critic output values evolution. On the left, we can monitor the evolution of the means of each discrete action (first head of the Actor model). On the right, we monitor the evolution of the standard deviation of each action parameter (second head of the Actor model).
+</p>
+
+
 
 
 
@@ -49,10 +57,17 @@ Fig1 - Environment logs over training steps for the QPAMDP algorithm.
 At the end of each loop of the QPAMDP alogirthm, I recorded the current policy and saved the video as a gif. Here is the learned policy after only one loop of training (which consists of several thousands of parameters updates per agent).
 
 <p align = "center">
-<img src = "https://github.com/thomashustache/platform/blob/main/results/gifs/QPAMDP/optimized_stds/optimstep_1_reward-0.999.gif">
+<img src = "https://github.com/thomashustache/platform/blob/main/results/gifs/QPAMDP/optimized_stds/accelerated_optimstep_0_reward-0.729.gif"  width=1000 height=auto>
 </p>
 <p align = "center">
-Gif.1 - Policy learned with the QPAMDP algorithm. Reward = 1.
+Gif.1 - Policy learned with the QPAMDP algorithm. Reward = 0.72 at the end of the first loop. The agent learned how to jump from platform 1 to 2 but he did not make the jump from the 2nd to the last platform
+</p>
+
+<p align = "center">
+<img src = "https://github.com/thomashustache/platform/blob/main/results/gifs/QPAMDP/optimized_stds/accelerated_optimstep_1_reward-0.999.gif" width=1000 height=auto>
+</p>
+<p align = "center">
+Gif.2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the second loop. The agent learned how to make the second jump.
 </p>
 
 ## 5. Tracks of improvements
