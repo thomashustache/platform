@@ -38,6 +38,7 @@ class A2CAgent(BaseAgent):
                                   logdir=self.logdir,
                                   hidden_size=128,
                                   optimize_stds=optimize_stds,
+                                  min_stds=self.min_stds,
                                   init_means=init_mean_action_params,
                                   init_stds=self.init_stds.clone()).to(self.device)
         self.optimizer = torch.optim.Adam(params=self.model.parameters(), lr=lr)
@@ -157,7 +158,7 @@ class A2CAgent(BaseAgent):
         """
         self._init_training()
         self.model.train()
-        self.model.init_stds = self.init_stds.clone()
+        self.model.init_stds = self.init_stds.clone() # when stsds are not optimized, we reset the stds to their initial values to ensure exploration
 
     def train(self, env: PlatformEnv, action_id_agent: BaseAgent) -> None:
         """Main training loop. On-policy update.

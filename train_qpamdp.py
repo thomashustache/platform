@@ -58,8 +58,8 @@ if __name__ == "__main__":
         optimize_stds=OPTIMIZE_STDS,
         init_stds=INIT_STDS,
         min_stds=MIN_STDS,
-        max_optim_steps=5e5,
-        max_plateau_steps=3500,
+        max_optim_steps=5e15,
+        max_plateau_steps=2500,
         agent_id=1,
     )
 

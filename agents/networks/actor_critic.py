@@ -6,13 +6,12 @@ from gym_platform.envs.platform_env import ACTION_LOOKUP
 from utils.config import DEVICE
 from torch.utils.tensorboard import SummaryWriter
 
-# max_means = torch.from_numpy(Constants.PARAMETERS_MAX).to(DEVICE)
-# max_stds = torch.Tensor([3, 3, 3]).to(DEVICE) # adjusted by looking at this : https://academo.org/demos/gaussian-distribution/
 
 class ActorCritic(nn.Module):
     def __init__(self,
                  init_stds: torch.Tensor,
                  init_means: torch.Tensor,
+                 min_stds: torch.Tensor,
                  logdir: str,
                  obs_size: int = 9,
                  act_size: int = 3,
@@ -40,25 +39,28 @@ class ActorCritic(nn.Module):
         self.optimize_stds = optimize_stds
         self.init_means = init_means
         self.init_stds = init_stds
+        self.min_stds = min_stds
         self.calibration_means = torch.Tensor([1., 1., 1.]).to(DEVICE)
         self.calibration_stds = torch.Tensor([1., 1., 1.]).to(DEVICE)
+        self.clip_stds = torch.Tensor([0.1] * 3).to(DEVICE) # avoid stds to be zero by adding thoses values to the Std head
         self._init_memories()
 
         self.base = nn.Sequential(
             nn.Linear(obs_size, hidden_size),
-            nn.ReLU(),
+            nn.SELU(),
         )
 
         self.mu = nn.Sequential(
             nn.Linear(hidden_size, act_size),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.Softplus()
             # Initally was nn.Tanh() but it makes more sense to use Relu to have positive values for mu parameters
         )
 
         self.std = nn.Sequential(
             nn.Linear(hidden_size, act_size),
-            nn.ReLU()
-            # Initially was nn.Softplus(), 
+            # nn.ReLU()
+            nn.Softplus() # Softplus to ensure positive stds values
         )
         self.value = nn.Linear(hidden_size, 1)
         self.apply(self._init_weights)
@@ -80,7 +82,8 @@ class ActorCritic(nn.Module):
         """
         if isinstance(module, nn.Linear):
             # module.weight.data.fill_(0.03)
-            module.weight.data.normal_(mean=0.1, std=0.1)
+            torch.nn.init.xavier_uniform_(module.weight)
+            # module.weight.data.normal_(mean=0.1, std=0.1)
             if module.bias is not None:
                 module.bias.data.zero_()
 
@@ -110,7 +113,7 @@ class ActorCritic(nn.Module):
 
         mus = self.mu(base_out) * self.calibration_means
         stds = self.std(base_out) * self.calibration_stds if self.optimize_stds else self.init_stds
-        
+                
         # if first_call of the forward method, we rescale the outputs of the model so that they are equal to the desired means and stds.
         if self.nb_calls == 0:
             for ind, y in enumerate(self.init_means):
@@ -124,7 +127,7 @@ class ActorCritic(nn.Module):
             self.nb_calls = 1
             
         self._store_params(mus=mus, stds=stds)
-        return torch.distributions.Normal(mus, stds), self.value(base_out)
+        return torch.distributions.Normal(mus, stds + self.clip_stds), self.value(base_out)
 
 
 

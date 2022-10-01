@@ -58,7 +58,9 @@ class QPAMDPTrainer(object):
     def record_video_policy(self, first_call: bool = False) -> None:
 
         print('generating video...')
-        self.psearch_agent.load('best_model.pth')
+        if not first_call:
+            self.psearch_agent.load('best_model.pth')
+        
         self.psearch_agent.model.eval()
         self.qlearn_agent.load('best_model.pth')
         self.qlearn_agent.model.eval()
@@ -67,21 +69,18 @@ class QPAMDPTrainer(object):
         video_path = f'results/videos/{self.name}/{self.experience_name}/'
         gif_folder = f'results/gifs/{self.name}/{self.experience_name}/'
         frames_path = f'results/frames/{self.name}/{self.experience_name}/optimstep_{self.global_optim_step}/'
-        
+        os.makedirs(frames_path, exist_ok=True)
         if first_call:
-            os.makedirs(frames_path, exist_ok=True)
             os.makedirs(video_path, exist_ok=True)
             os.makedirs(gif_folder, exist_ok=True)
             clean_dir(frames_path)
             clean_dir(video_path)
             clean_dir(gif_folder)
             save_config_file(self.config_script, video_path + 'config.txt')
-            
+        
         total_reward = 0
         d = False
-
         state, _ = env.reset()
-
         while not d:
 
             action_id = self.qlearn_agent.learned_act(state)

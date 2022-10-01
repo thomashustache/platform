@@ -14,7 +14,7 @@ class QNetwork(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(obs_size, hidden_size),
-            nn.ReLU(),
+            nn.SELU(),
             nn.Linear(hidden_size, n_actions),
         )
 

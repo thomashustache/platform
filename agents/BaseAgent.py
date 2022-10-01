@@ -167,7 +167,7 @@ class BaseAgent(ABC):
             self.convergence_counter = 0
             self.best_avg_reward = 0 
             print(
-                f"Stopping training because reward has not increased during the last {self.max_plateau_steps} episodes"
+                f"Stopping training because reward has not increased during the last {self.max_plateau_steps} optimization steps"
             )
             return True
 
