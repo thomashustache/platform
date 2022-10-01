@@ -35,7 +35,7 @@ def make_gif_from_video(video_path: str,
     frames = [Image.open(image) for ind, image in enumerate(images) if ind % skip_rate == 0]
     frame_one = frames[0]
     frame_one.save(gif_folder + gif_name, format="GIF", append_images=frames,
-                   save_all=True, duration=1, loop=1)
+                   save_all=True, duration=10, loop=0)
 
 
 if __name__ == '__main__':
