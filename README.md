@@ -32,6 +32,10 @@ For example, I chose ```EXPERIENCE_NAME = "optimized_stds"```.
 
 ## 4. Monitoring training with Tensorboard
 
+- During training, it is possible to monitor different logs, that will help us understanding the learning process (and also detect some bugs).
+- Please, enter the command: ```tensorboard --logdir results/logs/[EXPERIENCE_NAME] ``` where EXPERIENCE_NAME has to be replaced with the one you chose previously.
+- First, we can monitor the evolution of the average reward obtained per episodes over training steps, the number of environment steps done over training steps, the ratio of action chosen
+
 ## 5. Results
 At the end of each loop of the QPAMDP alogirthm, I recorded the current policy and saved the video as a gif. Here is the learned policy after only one loop of training (which consists of several thousands of parameters updates per agent).
 
@@ -39,7 +43,7 @@ At the end of each loop of the QPAMDP alogirthm, I recorded the current policy a
 <img src = "https://github.com/thomashustache/platform/blob/main/results/gifs/QPAMDP/optimized_stds/optimstep_1_reward-0.999.gif">
 </p>
 <p align = "center">
-Gif.1 - Policy learned with the QPAMDP algorithm. 
+Gif.1 - Policy learned with the QPAMDP algorithm. Reward = 1.
 </p>
 
 ## 5. Tracks of improvements
