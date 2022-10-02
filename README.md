@@ -58,14 +58,14 @@ For example, I chose ```EXPERIENCE_NAME = "optimized_std"```.
 - Tensorboard logs analysis:
 
 <p align = "center">
-<img src = "references/EnvLogs.png">
+<img src = "results/convergence_results/EnvLogs.png">
 </p>
 <p align = "center">
 Fig 1 - Environment logs over training steps for the QPAMDP algorithm. From left to right: Evolution of the ratio of action taken (pink is LEAP, green is RUN blue is HOP), evolutio of the Average reward per episode, evolution of the Average number of steps per episode. The last graph allows to monitor which of the DQN (0) or the A2C (1) agent is currently training.
 </p>
 
 <p align = "center">
-<img src = "references/EnvParams.png" width=600 height=auto>
+<img src = "results/convergence_results/EnvParams.png" width=600 height=auto>
 </p>
 <p align = "center">
 Fig 2 - Actor-Critic output values evolution. On the left, we can monitor the evolution of the means of each discrete action (first head of the Actor model). On the right, we monitor the evolution of the standard deviation of each action parameter (second head of the Actor model).
@@ -77,17 +77,17 @@ Fig 2 - Actor-Critic output values evolution. On the left, we can monitor the ev
 At the end of each loop of the QPAMDP alogirthm, I recorded the current policy and saved the video as a gif in the ```results/gifs/QPAMDP/EXPERIENCE_NAME``` folder. Here are the learned policies at the end of different training loops:
 
 <p align = "center">
-<img src = "references/accelerated_optimstep_0_reward-0.28.gif"  width=1000 height=auto>
+<img src = "results/convergence_results/accelerated_optimstep_1_reward-0.37.gif"  width=1000 height=auto>
 </p>
 <p align = "center">
-Gif 1 - Policy learned with the QPAMDP algorithm. Reward = 0.28 at the end of the first loop. The agent learned how to jump over an enemy but did not learn how to perform the jump onto the next platform.
+Gif 1 - Policy learned with the QPAMDP algorithm. Reward = 0.37 at the end of the first loop. The agent learned how to jump over an enemy but did not learn how to perform the jump onto the next platform.
 </p>
 
 <p align = "center">
-<img src = "references/accelerated_optimstep_3_reward-1.0.gif" width=1000 height=auto>
+<img src = "results/convergence_results/accelerated_optimstep_9_reward-1.gif" width=1000 height=auto>
 </p>
 <p align = "center">
-Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the third loop. The agent learned how to jump from one platform to another.
+Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the 9th loop. The agent learned how to jump from one platform to another.
 </p>
 
 ## 7. Observations and tracks of improvements
