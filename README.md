@@ -101,5 +101,6 @@ Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the 9
 - Implement the Parametrized Deep Q-learning algortithm [[P-DQN, Jiechao Xiong et Al., 2018]](https://arxiv.org/pdf/1810.06394.pdf) which seems to outperforms the QPAMDP algorithm on several different environments including the platform environment.
 
 - Implement the Multi-Pass DQN algorithm [[MP-DQN, Craig J. Bester and Al., 2019]](https://arxiv.org/pdf/1905.04388.pdf) which solves the *'false gradient problem'* that appears with P-QDN algorithm.
+- Last but not least, the agent always evolves in the exact same environment with fixed platforms' widths and gaps' widths. The agent is somehow 'overtitting' the environment to get the maximum reward. The question is, would the agent be lost if the platforms were shorter and if their number was higher than 2? In other words, it could be interesting to check the adaptation of the agent in various platforms domains.
 
 
