@@ -97,6 +97,10 @@ class QPAMDPTrainer(object):
         video_name = video_path + f'optimstep_{self.global_optim_step}_reward-' + total_reward + '.mp4'
         env.save_render_states(dir=frames_path, prefix='')
         load_images_to_video(imgs_path=frames_path, video_name=video_name)
+        
+        # rm frames once finished
+        clean_dir(frames_path)
+            
 
         # Gif from video
         print('generating gif from video...')
