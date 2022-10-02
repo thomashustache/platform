@@ -68,7 +68,7 @@ For example, I chose ```EXPERIENCE_NAME = "optimized_std"```.
 <img src = "results/convergence_results/EnvLogs.png">
 </p>
 <p align = "center">
-Fig 2 - Environment logs over training steps for the QPAMDP algorithm. From left to right: Evolution of the ratio of action taken (pink is LEAP, green is RUN blue is HOP), evolutio of the Average reward per episode, evolution of the Average number of steps per episode. The last graph allows to monitor which of the DQN (0) or the A2C (1) agent is currently training.
+Fig 2 - Environment logs over training steps for the QPAMDP algorithm. From left to right: Evolution of the ratio of action taken (pink is LEAP, green is RUN blue is HOP), evolution of the average aeward per episode, evolution of the average number of steps per episode. The last graph allows to monitor which of the DQN (0) or the A2C (1) agent is currently training.
 </p>
 
 <p align = "center">
