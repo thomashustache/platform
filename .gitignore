@@ -2,9 +2,9 @@
 ### Python template
 # Byte-compiled / optimized / DLL files
 
-resutls/gifs/QPAMDP/*/*
-resutls/videos/QPAMDP/*/*
-resuls/frames/*
+results/gifs/QPAMDP/*/*
+results/videos/QPAMDP/*/*
+results/frames/*
 
 __pycache__/
 *.py[cod]
