@@ -2,6 +2,13 @@
 
 This repository was forked from the original: https://github.com/cycraig/gym-platform/.
 
+<p align = "center">
+<img src = "img/platform_domain.png">
+</p>
+<p align = "center">
+Fig 1 - Platform domain
+</p>
+
 The Platform environment uses a parameterized action space and continuous state space. This task involves an agent learning to avoid enemies and traverse across platforms to reach a goal. At each time step, the agent has the choice between three discrete parametrized-actions:
 - Run(dx)
 - Hop(dx)
