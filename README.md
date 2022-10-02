@@ -103,11 +103,12 @@ Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the 9
 
 - We can observe the discrete actions that are taken are quite unbalanced. Hence, when DQN is learning, the agent will learn the qvalues from unbalanced batches of data. We could handle this by adding more weigths to rare actions for example.
 
-- Implement a better advantage estimation for the Actor-Critic model. Indeed, I used a simple TD estimatation but one could use the n-step return estimation or even the Generalized Advantage Estimation (GAE) to find a better trade-off between bias and variance.
+- Implement a better advantage estimation for the Actor-Critic model. Indeed, I used a simple TD estimatation but one could use the n-step return estimation or even the Generalized Advantage Estimation [[GAE, Schulman and Al, 2015]](https://arxiv.org/abs/1506.02438) to find a better trade-off between bias and variance.
 
-- Implement the Parametrized Deep Q-learning algortithm [[P-DQN, Jiechao Xiong et Al., 2018]](https://arxiv.org/pdf/1810.06394.pdf) which seems to outperforms the QPAMDP algorithm on several different environments including the platform environment.
+- Implement the Parametrized Deep Q-learning algortithm [[P-DQN, Jiechao Xiong et Al., 2018]](https://arxiv.org/pdf/1810.06394.pdf) which seems to outperform the QPAMDP algorithm on several different environments including the platform environment.
 
 - Implement the Multi-Pass DQN algorithm [[MP-DQN, Craig J. Bester and Al., 2019]](https://arxiv.org/pdf/1905.04388.pdf) which solves the *'false gradient problem'* that appears with P-QDN algorithm.
-- Last but not least, the agent always evolves in the exact same environment with fixed platforms' widths and gaps' widths. The agent is somehow 'overtitting' the environment to get the maximum reward. The question is, would the agent be lost if the platforms were shorter and if their number was higher than 2? In other words, it could be interesting to check the adaptation of the agent in various platforms domains.
+
+- Last but not least, the agent always evolves in the exact same environment with fixed platforms' widths and gaps' widths. The agent is somehow 'overtitting' the environment to get the maximum reward. The question is, would the agent be lost if the platforms were shorter and if their number was higher than 2? In other words, it could be interesting to check the adaptation of the agent in various platforms domains, by changing the environment parameters.
 
 
