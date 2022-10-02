@@ -11,9 +11,9 @@ from .agent_utils.torch_converter import torch_converter
 
 class A2CAgent(BaseAgent):
     def __init__(self,
-                 lr: float,
                  init_stds: torch.Tensor,
                  min_stds: torch.Tensor,
+                 lr: float = 2e-4,
                  optimize_stds: bool = True,
                  *args,
                  **kwargs

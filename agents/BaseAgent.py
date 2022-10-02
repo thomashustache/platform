@@ -16,13 +16,13 @@ class BaseAgent(ABC):
 
     def __init__(
         self,
-        max_optim_steps: float,
-        max_plateau_steps: int,
         agent_id: int,
-        algo_name: str,
         init_action_params: Sequence[float],
         device: torch.device,
         saved_models_dir: str,
+        max_optim_steps: float = 5e5,
+        max_plateau_steps: int = 7000,
+        algo_name: str = '',
         discount: float = 0.99,
         batch_size: int = 64,
         logdir: str = 'results/logs',

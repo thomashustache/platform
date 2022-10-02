@@ -16,8 +16,8 @@ from torch.utils.tensorboard import SummaryWriter
 
 class DQNAgent(BaseAgent):
     def __init__(self,
-                 memory_size: int,
-                 lr: float,
+                 lr: float = 2e-4,
+                 memory_size: int = 50000,
                  epsilon: float = 0.5,
                  eps_decay: float = 0.995,
                  min_epsilon: float= 0.1,
