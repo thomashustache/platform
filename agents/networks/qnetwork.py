@@ -1,6 +1,8 @@
 import torch.nn as nn
 import torch
 
+from .xavier_init import xavier_init
+
 class QNetwork(nn.Module):
     """Simple MLP network."""
 
@@ -17,7 +19,9 @@ class QNetwork(nn.Module):
             nn.SELU(),
             nn.Linear(hidden_size, n_actions),
         )
-
-    def forward(self, x: torch.Tensor):
+    
+        self.apply(xavier_init)
+                
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x.float())
 

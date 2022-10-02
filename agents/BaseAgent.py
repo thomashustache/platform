@@ -49,8 +49,6 @@ class BaseAgent(ABC):
         # main attributes
         self.model : nn.Module = None
         self.device = device
-        self.agent_id = agent_id
-        self.algo_name = algo_name
         self.batch_size = batch_size
         self.discount = discount
         self.max_optim_steps = max_optim_steps
@@ -61,6 +59,8 @@ class BaseAgent(ABC):
         self.convergence_counter = 0
         
         # secondary attributes
+        self.agent_id = agent_id
+        self.algo_name = algo_name
         self.saved_models_dir = saved_models_dir
         self.best_avg_reward = 0
 
@@ -74,6 +74,7 @@ class BaseAgent(ABC):
         self.action_mem = {
             a_name: MovingAverageMemory(250) for a_name in ACTION_LOOKUP.values()
         } # For each action, keep trace of the nb of times it was taken over the optimization steps
+        
         self.rewardmem = MovingAverageMemory(max_memory=250) # trace the average reward over optimization steps
         self.stepmem = MovingAverageMemory(max_memory=250) # trace the average nb of steps per episode over optimization steps
         self.loss_writer = SummaryWriter(log_dir=self.logdir + '/' + self.algo_name)
@@ -148,7 +149,6 @@ class BaseAgent(ABC):
             )
             self.writer_step += 1
             
-
     def check_convergence(self, delta_reward: float = 0.005) -> bool:
         """Check if the average reward per episode does not increase anymore so that we can declare the algorithm has converged.
 
@@ -160,7 +160,7 @@ class BaseAgent(ABC):
         """
         
         if len(self.rewardmem) < self.rewardmem.max_memory:
-            # To avoid too high variance, we wait for the buffer to be full before updating the best_avg_reward variable
+            # To avoid too high variance in the plot, we wait for the buffer to be full before updating the best_avg_reward variable
             return False
 
         if self.convergence_counter > self.max_plateau_steps:

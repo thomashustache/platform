@@ -1,11 +1,11 @@
-import numpy as np
 import torch
 import torch.nn as nn
 from agents.agent_utils.memory import MovingAverageMemory
 from gym_platform.envs.platform_env import ACTION_LOOKUP
 from utils.config import DEVICE
 from torch.utils.tensorboard import SummaryWriter
-
+from typing import Tuple
+from .xavier_init import xavier_init
 
 class ActorCritic(nn.Module):
     def __init__(self,
@@ -17,6 +17,7 @@ class ActorCritic(nn.Module):
                  act_size: int = 3,
                  hidden_size: int = 128,
                  optimize_stds: bool = False):
+        
         """Actor-Critic model
 
         Args:
@@ -30,7 +31,6 @@ class ActorCritic(nn.Module):
         """
         super(ActorCritic, self).__init__()
 
-
         self.log_writer = SummaryWriter(logdir + '/A2CAgent')
         self.mu_mem = {}
         self.sigma_mem = {}
@@ -40,9 +40,9 @@ class ActorCritic(nn.Module):
         self.init_means = init_means
         self.init_stds = init_stds
         self.min_stds = min_stds
-        self.calibration_means = torch.Tensor([1., 1., 1.]).to(DEVICE)
-        self.calibration_stds = torch.Tensor([1., 1., 1.]).to(DEVICE)
-        self.clip_stds = torch.Tensor([0.1] * 3).to(DEVICE) # avoid stds to be zero by adding thoses values to the Std head
+        self.calibration_means = torch.Tensor([1., 1., 1.]).to(DEVICE) # Will help to calibrate the outputs to the desired init mu values.
+        self.calibration_stds = torch.Tensor([1., 1., 1.]).to(DEVICE) # Will help to calibrate the outputs to the desired init stds values.
+        self.bias_stds = torch.Tensor([0.1] * 3).to(DEVICE) # avoid stds to be zero by adding thoses values to the Std head
         self._init_memories()
 
         self.base = nn.Sequential(
@@ -52,18 +52,16 @@ class ActorCritic(nn.Module):
 
         self.mu = nn.Sequential(
             nn.Linear(hidden_size, act_size),
-            # nn.ReLU(),
             nn.Softplus()
-            # Initally was nn.Tanh() but it makes more sense to use Relu to have positive values for mu parameters
+            # Initally was nn.Tanh() but it makes more sense to use Softplus to have positive values for mu parameters while keeping gradient different from zero
         )
 
         self.std = nn.Sequential(
             nn.Linear(hidden_size, act_size),
-            # nn.ReLU()
             nn.Softplus() # Softplus to ensure positive stds values
         )
         self.value = nn.Linear(hidden_size, 1)
-        self.apply(self._init_weights)
+        self.apply(xavier_init)
 
 
     def _init_memories(self) -> None:
@@ -73,21 +71,7 @@ class ActorCritic(nn.Module):
             self.mu_mem[a_name] = MovingAverageMemory(100)
             self.sigma_mem[a_name] = MovingAverageMemory(100)
         
-
-    def _init_weights(self, module):
-        """Custom weight Initialization to guide the agent at the very beginning so that he takes reasonable action parameters.
-
-        Args:
-            module (_type_): _description_
-        """
-        if isinstance(module, nn.Linear):
-            # module.weight.data.fill_(0.03)
-            torch.nn.init.xavier_uniform_(module.weight)
-            # module.weight.data.normal_(mean=0.1, std=0.1)
-            if module.bias is not None:
-                module.bias.data.zero_()
-
-    def _store_params(self, mus: torch.Tensor, stds: torch.Tensor):
+    def _store_params(self, mus: torch.Tensor, stds: torch.Tensor) -> None:
         """Store the output Means and Stds in their respective buffers.
 
         Args:
@@ -98,7 +82,7 @@ class ActorCritic(nn.Module):
             self.mu_mem[a_name].add(mus[i].clone().item())
             self.sigma_mem[a_name].add(stds[i].clone().item())
 
-    def update_tensorboard(self, writer_step: int):
+    def update_tensorboard(self, writer_step: int) -> None:
         """Update tensorboard logs.
 
         Args:
@@ -108,9 +92,8 @@ class ActorCritic(nn.Module):
         self.log_writer.add_scalars('Params/Means_ActParam/', {k:v() for k, v in self.mu_mem.items()}, writer_step)
         self.log_writer.add_scalars('Params/Sigmas_ActParam/', {k:v() for k, v in self.sigma_mem.items()}, writer_step)
 
-    def forward(self, x: torch.Tensor) -> torch.distributions:
+    def forward(self, x: torch.Tensor) -> Tuple[torch.distributions.Normal, torch.Tensor]:
         base_out = self.base(x)
-
         mus = self.mu(base_out) * self.calibration_means
         stds = self.std(base_out) * self.calibration_stds if self.optimize_stds else self.init_stds
                 
@@ -127,7 +110,7 @@ class ActorCritic(nn.Module):
             self.nb_calls = 1
             
         self._store_params(mus=mus, stds=stds)
-        return torch.distributions.Normal(mus, stds + self.clip_stds), self.value(base_out)
+        return torch.distributions.Normal(mus, stds + self.bias_stds), self.value(base_out)
 
 
 

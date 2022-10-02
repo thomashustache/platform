@@ -43,7 +43,7 @@ if __name__ == "__main__":
         lr=LR_QLEARN,
         agent_id=0,
         max_optim_steps=5e5,
-        max_plateau_steps=10000,
+        max_plateau_steps=7500,
     )
 
     # 3. Define P-search Agent
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         init_stds=INIT_STDS,
         min_stds=MIN_STDS,
         max_optim_steps=5e15,
-        max_plateau_steps=2500,
+        max_plateau_steps=3000,
         agent_id=1,
     )
 

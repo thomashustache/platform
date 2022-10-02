@@ -41,8 +41,6 @@ class QPAMDPTrainer(object):
         self.writer = SummaryWriter(log_dir=logdir + f'/{self.name}')
         self.tot_writter_steps = 0
         self.global_optim_step = 0
-        self.tot_episodes_played = 0
-        self.eval_frequency = 1
         
         # config
         self.config_script = config_script
@@ -50,7 +48,7 @@ class QPAMDPTrainer(object):
 
         self.set_common_tensorboard_writers()
 
-    def set_common_tensorboard_writers(self):
+    def set_common_tensorboard_writers(self) -> None:
 
         self.qlearn_agent.tb_writer = self.writer
         self.psearch_agent.tb_writer = self.writer
@@ -61,11 +59,13 @@ class QPAMDPTrainer(object):
         if not first_call:
             self.psearch_agent.load('best_model.pth')
         
+        # pass all models in inference mode.
         self.psearch_agent.model.eval()
         self.qlearn_agent.load('best_model.pth')
         self.qlearn_agent.model.eval()
         env = PlatformEnv()
 
+        # Make sure all the paths are well created to save the videos, gifs, frames etc
         video_path = f'results/videos/{self.name}/{self.experience_name}/'
         gif_folder = f'results/gifs/{self.name}/{self.experience_name}/'
         frames_path = f'results/frames/{self.name}/{self.experience_name}/optimstep_{self.global_optim_step}/'
@@ -78,6 +78,8 @@ class QPAMDPTrainer(object):
             clean_dir(gif_folder)
             save_config_file(self.config_script, video_path + 'config.txt')
         
+        
+        # start recording an episode
         total_reward = 0
         d = False
         state, _ = env.reset()
@@ -91,12 +93,12 @@ class QPAMDPTrainer(object):
 
         total_reward = str(int(total_reward * 100) / 100)
 
-        # Save all frames and create video + Gif
+        # Save all frames and create video
         video_name = video_path + f'optimstep_{self.global_optim_step}_reward-' + total_reward + '.mp4'
         env.save_render_states(dir=frames_path, prefix='')
         load_images_to_video(imgs_path=frames_path, video_name=video_name)
 
-        # Gif
+        # Gif from video
         print('generating gif from video...')
         gif_name = f'optimstep_{self.global_optim_step}_reward-' + total_reward + '.gif'
         make_gif_from_video(video_path=video_name,
@@ -106,7 +108,7 @@ class QPAMDPTrainer(object):
                             skip_rate=5)
 
 
-    def train(self):
+    def train(self) -> None:
         """Reproduce the Q-PAMDP(k) training procedure described in the paper: https://arxiv.org/pdf/1509.01644.pdf
 
         Inputs:
@@ -136,7 +138,6 @@ class QPAMDPTrainer(object):
 
             ## update all tb writer steps
             self.psearch_agent.writer_step = self.qlearn_agent.writer_step
-            # self.psearch_agent.rewardmem.memory = self.qlearn_agent.rewardmem.memory.copy()
             print('Training Psearch algorithm...')
             self.qlearn_agent.load(model_name='best_model.pth')
             self.qlearn_agent.model.eval()
@@ -149,7 +150,6 @@ class QPAMDPTrainer(object):
 
             
             self.qlearn_agent.writer_step = self.psearch_agent.writer_step
-            # self.qlearn_agent.rewardmem.memory = self.psearch_agent.rewardmem.memory.copy()
             print('Training Qlearn algorithm...')
             self.psearch_agent.load(model_name='best_model.pth')
             self.psearch_agent.model.eval()
