@@ -42,7 +42,7 @@ if __name__ == "__main__":
         batch_size=BATCH_SIZE_QLEARN,
         lr=LR_QLEARN,
         agent_id=0,
-        max_optim_steps=5e5,
+        max_optim_steps=100,
         max_plateau_steps=7500,
     )
 
@@ -58,8 +58,8 @@ if __name__ == "__main__":
         optimize_stds=OPTIMIZE_STDS,
         init_stds=INIT_STDS,
         min_stds=MIN_STDS,
-        max_optim_steps=5e15,
-        max_plateau_steps=3000,
+        max_optim_steps=10,
+        max_plateau_steps=10,
         agent_id=1,
     )
 

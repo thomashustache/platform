@@ -152,7 +152,7 @@ class A2CAgent(BaseAgent):
         # update scalars
         self.criticloss_mem.add(critic_loss.item() / self.batch_size)
         self.actorloss_mem.add(actor_loss.item() / self.batch_size)
-
+        
     def init_training(self):
         """Training initialization
         """
@@ -169,7 +169,6 @@ class A2CAgent(BaseAgent):
         """
 
         self.init_training()
-
         while self.current_optim_step < self.max_optim_steps and not self.check_convergence():
             self.train_one_step(env=env, action_id_agent=action_id_agent)
 

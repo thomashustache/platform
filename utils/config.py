@@ -3,7 +3,7 @@ import numpy as np
 import torch
 
 N_ACTIONS = len(ACTION_LOOKUP)
-EXPERIENCE_NAME = "optimized_stds_low_init"
+EXPERIENCE_NAME = "test"
 SAVED_MODEL_DIR = "results/saved_models/" + EXPERIENCE_NAME + "/"
 LOGDIR = 'results/logs/' + EXPERIENCE_NAME
 DEVICE = torch.device("cuda:0")

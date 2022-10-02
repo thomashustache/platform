@@ -41,8 +41,6 @@ class QPAMDPTrainer(object):
         
         # config
         self.config_script = config_script
-
-
         self.set_common_tensorboard_writers()
 
     def set_common_tensorboard_writers(self) -> None:
@@ -144,9 +142,12 @@ class QPAMDPTrainer(object):
             self.qlearn_agent.model.eval()
             self.psearch_agent.model.train()
             if self.k_param != -1:
+                # TODO: need to fix the QPAMDP(k) version
+                continue
                 for _ in range(self.k_param):
                     self.psearch_agent.train_one_step(env=self.env, action_id_agent=self.qlearn_agent)
             else:
+                # QPAMDP(inf)
                 self.psearch_agent.train(env=self.env, action_id_agent=self.qlearn_agent)
 
             
