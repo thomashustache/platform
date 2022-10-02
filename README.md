@@ -2,7 +2,7 @@
 
 This repository was forked from the original: https://github.com/cycraig/gym-platform/.
 
-The Platform environment uses a parameterized action space and continuous state space. This task involves an agent learning to avoid enemies and traverse across platforms to reach a goal. Three actions are available to the agent: 
+The Platform environment uses a parameterized action space and continuous state space. This task involves an agent learning to avoid enemies and traverse across platforms to reach a goal. At each time step, the agent has the choice between three discrete parametrized-actions:
 - Run(dx)
 - Hop(dx)
 - leap(dx) 
