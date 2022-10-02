@@ -42,7 +42,7 @@ Clone repository and install all dependancies:
   
 ## 4. Launch a training
 
-- First choose a name of an experience and fill it the ```EXPERIENCE_NAME``` variable from the ```utils/config.py``` file. Every logs will be then saved under this root folder so that it is easy to access them.
+- First choose a name of an experience and fill it the ```EXPERIENCE_NAME``` variable from the ```utils/config.py``` file. Every logs will be then be saved under this root folder so that it is easy to access them.
 
 For example, I chose ```EXPERIENCE_NAME = "optimized_std"```.
 
