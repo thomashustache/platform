@@ -1,0 +1,11 @@
+gym==0.26.1
+moviepy==1.0.3
+numba==0.56.2
+numpy==1.23.3
+opencv_python==4.6.0.66
+Pillow==9.2.0
+pygame==2.1.2
+PySimpleGUI==4.60.3
+scikit_learn==1.1.2
+setuptools==63.4.1
+torch==1.12.1+cu113
