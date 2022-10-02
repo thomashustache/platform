@@ -1,16 +1,13 @@
-import gym
 from gym_platform.envs.platform_env import PlatformEnv
 from agents.BaseAgent import BaseAgent
 from agents.DQNAgent import DQNAgent
-# import cv2
-import glob
+
 import numpy as np
 import torch
-
-from utils.config import INIT_ACTION_PARAMS, DEVICE, LOGDIR, SAVED_MODEL_DIR, 
-
+import gym
 
 
+from utils.config import INIT_ACTION_PARAMS, DEVICE, LOGDIR, SAVED_MODEL_DIR
 
 if __name__ == '__main__':
     
