@@ -68,14 +68,14 @@ For example, I chose ```EXPERIENCE_NAME = "optimized_std"```.
 <img src = "results/convergence_results/EnvLogs.png">
 </p>
 <p align = "center">
-Fig 1 - Environment logs over training steps for the QPAMDP algorithm. From left to right: Evolution of the ratio of action taken (pink is LEAP, green is RUN blue is HOP), evolutio of the Average reward per episode, evolution of the Average number of steps per episode. The last graph allows to monitor which of the DQN (0) or the A2C (1) agent is currently training.
+Fig 2 - Environment logs over training steps for the QPAMDP algorithm. From left to right: Evolution of the ratio of action taken (pink is LEAP, green is RUN blue is HOP), evolutio of the Average reward per episode, evolution of the Average number of steps per episode. The last graph allows to monitor which of the DQN (0) or the A2C (1) agent is currently training.
 </p>
 
 <p align = "center">
 <img src = "results/convergence_results/EnvParams.png" width=600 height=auto>
 </p>
 <p align = "center">
-Fig 2 - Actor-Critic output values evolution. On the left, we can monitor the evolution of the means of each discrete action (first head of the Actor model). On the right, we monitor the evolution of the standard deviation of each action parameter (second head of the Actor model).
+Fig 3 - Actor-Critic output values evolution. On the left, we can monitor the evolution of the means of each discrete action (first head of the Actor model). On the right, we monitor the evolution of the standard deviation of each action parameter (second head of the Actor model).
 </p>
 
 - On the tensorboard web page, one can also monitor the evolution of the different agents' losses.
