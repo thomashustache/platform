@@ -87,7 +87,7 @@ Gif 1 - Policy learned with the QPAMDP algorithm. Reward = 0.28 at the end of th
 <img src = "references/accelerated_optimstep_3_reward-1.0.gif" width=1000 height=auto>
 </p>
 <p align = "center">
-Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the third loop. The agent learned how to make the second jump.
+Gif 2 - Policy learned with the QPAMDP algorithm. Reward = 1 at the end of the third loop. The agent learned how to jump from one platform to another.
 </p>
 
 ## 7. Observations and tracks of improvements
