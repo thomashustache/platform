@@ -5,6 +5,7 @@
 results/gifs/QPAMDP/*/*
 results/videos/QPAMDP/*/*
 results/frames/*
+resutls/logs/*/*/*/*
 
 __pycache__/
 *.py[cod]
