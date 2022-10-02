@@ -3,7 +3,7 @@ import os
 import torch.nn as nn
 
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Sequence, Union
 from agents.agent_utils.memory import MovingAverageMemory
 from api.action import Action
 from gym_platform.envs.platform_env import ACTION_LOOKUP, PlatformEnv
@@ -81,7 +81,7 @@ class BaseAgent(ABC):
         self._build_save_directory()
 
     @abstractmethod
-    def act(self, state: np.ndarray) -> Action:
+    def act(self, state: np.ndarray) -> Union[int, torch.Tensor]:
         """Choose an action to an eps-greedy policy.
 
         Args:
@@ -107,7 +107,16 @@ class BaseAgent(ABC):
         pass
 
     @abstractmethod
-    def learned_act(self, state: np.ndarray) -> Action:
+    def train_one_step(self, env: PlatformEnv) -> None:
+        """Performs a single parameter update
+
+        Args:
+            env (PlatformEnv): the platform domain
+        """
+        pass
+    
+    @abstractmethod
+    def learned_act(self, state: np.ndarray) -> Union[int, np.ndarray]:
         """ Act according to current agent's policy. From a given state s
         it proposes an action a"""
         pass

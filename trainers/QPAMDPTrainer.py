@@ -1,12 +1,9 @@
-from genericpath import exists
 from agents.DQNAgent import DQNAgent
 from agents.A2CAgent import A2CAgent
 from gym_platform.envs.platform_env import PlatformEnv
 from torch.utils.tensorboard import SummaryWriter
-from agents.agent_utils.torch_converter import torch_converter
 from api.action import Action, deconvert_act
 import os
-import glob
 
 from utils.frames_to_vid import load_images_to_video
 from utils.video_to_gif import make_gif_from_video
@@ -117,7 +114,7 @@ class QPAMDPTrainer(object):
 
         Inputs:
 
-            Inital weights Theta0 (Action Parameters policy) and W0 (Action policy)
+            Initial weights Theta0 (Action Parameters policy) and W0 (Action policy)
             Policy Search method (to update Theta)
             Q-Learn algorithm (to update W)
 

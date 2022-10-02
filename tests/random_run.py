@@ -2,23 +2,8 @@ import gym
 from gym_platform.envs.platform_env import PlatformEnv
 from agents.BaseAgent import BaseAgent
 from agents.RandomAgent import RandomAgent
-from api.observation import Observation, convert_obs, deconvert_obs
-from api.action import Action, deconvert_act, convert_act
-# import cv2
-import glob
-import numpy as np
-import cv2
+from api.action import deconvert_act
 
-def load_images_to_video(imgs_path: str, video_name: str = 'random_run'):
-
-    files = sorted(glob.glob(imgs_path + '*'))
-    f0 = cv2.imread(files[0])
-    frameSize = (f0.shape[1], f0.shape[0])
-    out = cv2.VideoWriter(f'{video_name}.avi',cv2.VideoWriter_fourcc(*'DIVX'), 25, frameSize)
-    for filename in files:
-        img = cv2.imread(filename)
-        out.write(img)
-    out.release()
 
 def run(agent: BaseAgent, env: PlatformEnv, epoch: int, prefix: str = ''):
     # Number of won games

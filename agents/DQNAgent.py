@@ -29,6 +29,7 @@ class DQNAgent(BaseAgent):
         """DQN Agent class
 
         Args:
+            lr (float): learning rate
             memory_size (int): Size of the replay Buffer
             epsilon (float, optional): Initial epsilon for eps-greedy policy. Defaults to 0.5.
             eps_decay (float, optional): decay rateof epsilon. Defaults to 0.999.
@@ -49,7 +50,6 @@ class DQNAgent(BaseAgent):
         self.replay_buffer = ReplayBuffer(max_memory=memory_size, batch_size=self.batch_size, device=self.device)
         self.loss_memory = MovingAverageMemory(100)
         self.loss_writer_step = 0
-        # self.batch_size = batch_size
 
         # Models
         self.model = QNetwork(obs_size=9, n_actions=self.nb_actions, hidden_size=128).to(self.device)
@@ -174,7 +174,7 @@ class DQNAgent(BaseAgent):
 
         return td_targets
 
-    def single_optimization_step(self) -> None:
+    def train_one_step(self) -> float:
         """Performs a single optimization step on a btach of transitions sampled from the ReplayBuffer.
         """
 
@@ -209,7 +209,6 @@ class DQNAgent(BaseAgent):
         self.update_target_graph()
         self.epsilon = self.init_epsilon
 
-
     def train(self, env: PlatformEnv, action_param_agent: BaseAgent = None) -> None:
         """Learning loop. Off-Policy update.
 
@@ -229,7 +228,7 @@ class DQNAgent(BaseAgent):
             # when we have enough xp in the buffer, start training.
             if len(self.replay_buffer) >= self.batch_size:
 
-                current_loss = self.single_optimization_step()
+                current_loss = self.train_one_step()
                 self.loss_memory.add(current_loss)
 
                 # Main Tensorboard logs
