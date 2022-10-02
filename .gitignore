@@ -3,6 +3,7 @@
 # Byte-compiled / optimized / DLL files
 
 resutls/gifs/QPAMDP/*/*
+resutls/videos/QPAMDP/*/*
 resuls/frames/*
 
 __pycache__/
