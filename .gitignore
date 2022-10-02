@@ -2,10 +2,10 @@
 ### Python template
 # Byte-compiled / optimized / DLL files
 
-**results/gifs/
-**results/videos/*/
-**results/frames/*/
-**results/logs/*/
+results/**gifs/
+results/**videos/
+results/**frames/
+results/**logs/
 results/jpgs/*
 
 __pycache__/
