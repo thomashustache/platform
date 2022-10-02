@@ -71,7 +71,7 @@ Fig 1 - Environment logs over training steps for the QPAMDP algorithm. From left
 Fig 2 - Actor-Critic output values evolution. On the left, we can monitor the evolution of the means of each discrete action (first head of the Actor model). On the right, we monitor the evolution of the standard deviation of each action parameter (second head of the Actor model).
 </p>
 
-- On the tensorboard web page, one can also monitor the evolution on the different agents' losses.
+- On the tensorboard web page, one can also monitor the evolution of the different agents' losses.
 
 ## 6. Results
 At the end of each loop of the QPAMDP alogirthm, I recorded the current policy and saved the video as a gif in the ```results/gifs/QPAMDP/EXPERIENCE_NAME``` folder. Here are the learned policies at the end of different training loops:
