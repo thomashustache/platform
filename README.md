@@ -30,7 +30,7 @@ Clone repository and install all dependancies:
 
 ### torch version
 
-I used ```torh==1.12.1 + cuda 11.3``` for this environment. You need to install the right torch, torchaudio and torchvision versions compatible with your local cuda configuration.
+I used ```torh==1.12.1 + cuda 11.3``` for this environment. You need to install the right torch, torchaudio and torchvision versions that are compatible with your local cuda configuration.
 
 ## 2. Arborescence overview
 
