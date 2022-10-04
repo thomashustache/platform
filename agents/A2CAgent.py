@@ -113,7 +113,7 @@ class A2CAgent(BaseAgent):
             # Compute action parameters from Actor's head and value from Critic's head
             torch_sate = torch_converter(state).to(self.device)
             dists, value_pred = self.model(torch_sate)
-            action_params = dists.rsample()
+            action_params = dists.rsample() # .rsample() will allow the computation of gradients, which is not the case with .sample()
 
             # compute log_prob for update rule
             log_prob = dists.log_prob(action_params)[action_id]
