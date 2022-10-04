@@ -43,7 +43,7 @@ if __name__ == "__main__":
         lr=LR_QLEARN,
         agent_id=0,
         max_optim_steps=5e5,
-        max_plateau_steps=7500,
+        max_plateau_steps=7000,
     )
 
     # 3. Define P-search Agent
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         logdir=LOGDIR,
         psearch_agent=a2c_agent,
         qlearn_agent=dqn_agent,
-        max_qpamdp_steps=10,
+        max_qpamdp_steps=20,
         k_param=-1,
     )
     

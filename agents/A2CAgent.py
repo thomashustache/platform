@@ -82,7 +82,7 @@ class A2CAgent(BaseAgent):
 
         torch_sate = torch_converter(state).to(self.device)
         dists, _ = self.model(torch_sate)
-        action_params = dists.sample()
+        action_params = dists.rsample()
 
         return action_params
 
@@ -113,7 +113,7 @@ class A2CAgent(BaseAgent):
             # Compute action parameters from Actor's head and value from Critic's head
             torch_sate = torch_converter(state).to(self.device)
             dists, value_pred = self.model(torch_sate)
-            action_params = dists.sample()
+            action_params = dists.rsample()
 
             # compute log_prob for update rule
             log_prob = dists.log_prob(action_params)[action_id]
@@ -135,6 +135,7 @@ class A2CAgent(BaseAgent):
             self.episode_reward += reward
             self.episode_step += step
             k += 1
+
             if done:
                 state, _ = env.reset()
                 self.rewardmem.add(self.episode_reward)
@@ -182,7 +183,7 @@ class A2CAgent(BaseAgent):
                 self.model.update_tensorboard(writer_step=self.writer_step)
 
             self.current_optim_step += 1
-            
+
             # decrease Stds values with decay rate
             if not self.optimize_stds:
                 self.model.init_stds = torch.amax(torch.stack([self.model.init_stds * self.std_decay, self.min_stds], 0), 0)
