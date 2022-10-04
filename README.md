@@ -20,12 +20,17 @@ A dense reward is given to the agent based on the percentage of distance it trav
 
 ## 1. Installation.
 
+### virtual environment
 Clone repository and install all dependancies:
 ```
   git clone https://github.com/thomashustache/platform/
   cd platform
   conda env create --name cycraig --file=env.yml
 ```
+
+### torch version
+
+I used ```torh==1.12.1 + cuda 11.3``` for this environment. You need to install the right torch, torchaudio and torchvision versions that are compatible with your local cuda configuration.
 
 ## 2. Arborescence overview
 
